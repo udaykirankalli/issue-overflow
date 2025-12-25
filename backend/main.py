@@ -10,16 +10,15 @@ import hashlib
 
 app = FastAPI(title="IssueFlow API")
 
-# CORS middleware - allows frontend to connect
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Database initialization
 def init_db():
     conn = sqlite3.connect('issueflow.db')
     cursor = conn.cursor()
@@ -38,7 +37,7 @@ def init_db():
 
 init_db()
 
-# Models for API
+
 class IssueInput(BaseModel):
     text: str
 
@@ -50,7 +49,6 @@ class Issue(BaseModel):
     entities: List[str]
     timestamp: str
 
-# Classification engine - the "intelligence" of the system
 class IssueClassifier:
     CATEGORIES = {
         'Equipment': [
@@ -138,7 +136,6 @@ class IssueClassifier:
         
         return list(set(entities))
 
-# API Routes
 @app.get("/")
 async def root():
     return {
@@ -228,19 +225,19 @@ async def get_analytics():
     conn = sqlite3.connect('issueflow.db')
     cursor = conn.cursor()
     
-    # Total issues
+    
     cursor.execute("SELECT COUNT(*) FROM issues")
     total = cursor.fetchone()[0]
     
-    # By category
+    
     cursor.execute("SELECT category, COUNT(*) FROM issues GROUP BY category")
     by_category = dict(cursor.fetchall())
     
-    # By severity
+   
     cursor.execute("SELECT severity, COUNT(*) FROM issues GROUP BY severity")
     by_severity = dict(cursor.fetchall())
     
-    # 7-day trend
+ 
     seven_days_ago = (datetime.now() - timedelta(days=7)).isoformat()
     cursor.execute("""
         SELECT DATE(timestamp) as date, COUNT(*) as count
@@ -253,7 +250,7 @@ async def get_analytics():
     
     conn.close()
     
-    # Fill in missing days
+    
     trend = []
     for i in range(7):
         date = (datetime.now() - timedelta(days=6-i)).strftime('%Y-%m-%d')

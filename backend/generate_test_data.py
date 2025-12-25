@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
 import requests
 import time
-import random
 
 API_URL = "http://localhost:8000"
 
